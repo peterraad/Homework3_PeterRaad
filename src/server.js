@@ -1,18 +1,28 @@
 const Express = require('express');
 const BodyParser = require('body-parser');
 const Winston = require('winston');
+const { StatusCodes } = require('http-status-codes');
 
 const app = Express();
 
 app.use(BodyParser.json());
 app.use(((req, res, next) => {
-  console.log(req.method);
+  if (req.method === 'DELETE') {
+    res.send(StatusCodes.METHOD_NOT_ALLOWED);
+  } else {
+    next();
+  }
   next();
 }));
 
-app.get('/', (req, res) => {
-  res.send('Hello World');
-});
+// app.use(((req, res, next) => {
+//   console.log(req.method);
+//   next();
+// }));
+//
+// app.get('/', (req, res) => {
+//   res.send('Hello World');
+// });
 app.listen(8080);
 
 // iterating through all the keys of an object to get the value you want
