@@ -5,14 +5,41 @@ const { StatusCodes } = require('http-status-codes');
 
 const app = Express();
 
+// check if this works
+const DateValidationFinder = (thing, search) => {
+  let result = null;
+  Object.keys(search).forEach((key) => {
+    if ((key.toLowerCase() === thing)) {
+      result = search[key];
+    }// console.log(key, obj[key]);
+  });
+  return result;
+};
+// function DateValidationFinder(obj) {
+//   return Object.keys(obj).forEach((key) => {
+//     if (!(key.toLowerCase() === 'date-validation')) {
+//
+//     }// console.log(key, obj[key]);
+//   });
+// }
 app.use(BodyParser.json());
+
+// delete middleware
 app.use(((req, res, next) => {
-  if (req.method === 'DELETE') {
-    res.send(StatusCodes.METHOD_NOT_ALLOWED);
-  } else {
+  if (!(req.method === 'DELETE')) {
     next();
+  } else {
+    res.sendStatus(StatusCodes.METHOD_NOT_ALLOWED);
   }
-  next();
+}));
+
+app.use(((req, res, next) => {
+  // Object.keys(req.query).forEach((key) => {
+  //   console.log(key, req.query[key]);
+  // });// Object.keys((obj).forEach((key) => ... obj[key])
+  if (DateValidationFinder('date-validation', req.query) || DateValidationFinder('date-validation', req.headers)) {
+    console.log('found');
+  }
 }));
 
 // app.use(((req, res, next) => {
