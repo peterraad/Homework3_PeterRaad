@@ -35,8 +35,6 @@ app.use((req, res, next) => {
     || Number.isNaN(headerChecker))) {
     const requestDate = (queryChecker != null) ? queryChecker : headerChecker;
     const serverDate = Math.round(Date.now() / 1000);
-    console.log('servertime:', serverDate);
-    console.log('time in miliseconds: ', Date.now());
     if (requestDate > (serverDate - (5 * 60)) && requestDate < (serverDate + (5 * 60))) {
       req.body.requestDate = requestDate;
       req.body.serverDate = serverDate;
@@ -49,6 +47,8 @@ app.use((req, res, next) => {
   }
   // next();
 });
+
+// logs the incoming request with winston
 app.use((req, res, next) => {
   Winston.log({
     level: 'info',
@@ -66,10 +66,18 @@ app.use((req, res, next) => {
 app.use((req, res) => {
   const random = Math.round(Math.random());
   if (random === 1) {
-    res.status(StatusCodes.OK);
+    res.sendStatus(StatusCodes.OK);
   } else {
     throw new Error('Oops');
   }
 });
 
+app.use((err, req, res, next) => {
+  res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
+  const errormessage = `We're sorry, the error was: ${err.message}`;
+  Winston.log({
+    level: 'error',
+    errorMessage: errormessage,
+  });
+});
 app.listen(8080);
