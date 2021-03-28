@@ -15,76 +15,61 @@ const DateValidationFinder = (thing, search) => {
   });
   return result;
 };
-// function DateValidationFinder(obj) {
-//   return Object.keys(obj).forEach((key) => {
-//     if (!(key.toLowerCase() === 'date-validation')) {
-//
-//     }// console.log(key, obj[key]);
-//   });
-// }
+
 app.use(BodyParser.json());
 
 // delete middleware
-app.use(((req, res, next) => {
+app.use((req, res, next) => {
   if (!(req.method === 'DELETE')) {
     next();
   } else {
     res.sendStatus(StatusCodes.METHOD_NOT_ALLOWED);
   }
-}));
+});
 
-app.use(((req, res, next) => {
-  // Object.keys(req.query).forEach((key) => {
-  //   console.log(key, req.query[key]);
-  // });// Object.keys((obj).forEach((key) => ... obj[key])
-  if (DateValidationFinder('date-validation', req.query) || DateValidationFinder('date-validation', req.headers)) {
-    console.log('found');
+app.use((req, res, next) => {
+  const queryChecker = DateValidationFinder('date-validation', req.query);
+  const headerChecker = DateValidationFinder('date-validation', req.headers);
+
+  if ((queryChecker || headerChecker) != null && !(Number.isNaN(queryChecker)
+    || Number.isNaN(headerChecker))) {
+    const requestDate = (queryChecker != null) ? queryChecker : headerChecker;
+    const serverDate = Math.round(Date.now() / 1000);
+    console.log('servertime:', serverDate);
+    console.log('time in miliseconds: ', Date.now());
+    if (requestDate > (serverDate - (5 * 60)) && requestDate < (serverDate + (5 * 60))) {
+      req.body.requestDate = requestDate;
+      req.body.serverDate = serverDate;
+      next();
+    } else {
+      res.sendStatus(StatusCodes.UNAUTHORIZED);
+    }
+  } else {
+    res.sendStatus(StatusCodes.UNAUTHORIZED);
   }
-}));
+  // next();
+});
+app.use((req, res, next) => {
+  Winston.log({
+    level: 'info',
+    serverTime: req.body.serverDate,
+    requestType: req.method,
+    url: req.url,
+    body: req.body,
+    query: req.query,
+    headers: req.headers,
+    dateValidation: req.body.requestDate,
+  });
+  next();
+});
 
-// app.use(((req, res, next) => {
-//   console.log(req.method);
-//   next();
-// }));
-//
-// app.get('/', (req, res) => {
-//   res.send('Hello World');
-// });
+app.use((req, res) => {
+  const random = Math.round(Math.random());
+  if (random === 1) {
+    res.status(StatusCodes.OK);
+  } else {
+    throw new Error('Oops');
+  }
+});
+
 app.listen(8080);
-
-// iterating through all the keys of an object to get the value you want
-// Object.keys((obj).forEach((key) => ... obj[key])
-
-// parse number in base 10
-// Number.parseInt(THING, 10);
-
-/// date constructor expects a date - it expects an epoch of time which is time that passed
-// since Jan 1st 1970 - it also takes milliseconds - transform it look at the line below
-// new Date(Number * 1000)
-
-// if you do date.now() this will give back milliseconds just like above so you do date.now()/1000
-
-// if (!Number.isNaN(whatever)) {
-//
-// }
-
-// request.query
-// request.headers;
-// request.method;
-// request.originalUrl;
-
-// module.exports = (request, response, next) => {
-//   request.PROPERTY = WHATEVER;
-//   next();
-// };
-//
-// response.status(StatusCodes.ACCEPTED).send('');
-//
-// const winstonLogger = Winston.createLogger(
-//   {
-//     transports:
-//       [new Winston.transports.Console({ format: Winston.format.simple() })],
-//   },
-// );
-//
-// Math.floor(Math.random() * (max - min + 1) + min);
