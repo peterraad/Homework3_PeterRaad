@@ -2,7 +2,8 @@ const Express = require('express');
 const BodyParser = require('body-parser');
 const Winston = require('winston');
 const { StatusCodes } = require('http-status-codes');
-
+// SETUP THE INSTANCE OF WINSTON AND IMPORT IT TO THE MIDDLEWARES THAT NEED IT
+// YOU DO NOT NEED WINSTON TO LOG THE ERORR JUST SEND IT TO THE USER AS AN ERROR
 const app = Express();
 
 // check if this works
@@ -16,6 +17,7 @@ const DateValidationFinder = (thing, search) => {
   return result;
 };
 
+// keep this in the server file
 app.use(BodyParser.json());
 
 // delete middleware
@@ -73,11 +75,14 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
-  const errormessage = `We're sorry, the error was: ${err.message}`;
-  Winston.log({
-    level: 'error',
-    errorMessage: errormessage,
-  });
+  res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(`We're sorry, the error was: ${err.message}`);
+  // const errormessage = `We're sorry, the error was: ${err.message}`;
+  // Winston.log({
+  //   level: 'error',
+  //   errorMessage: errormessage,
+  // });
 });
+
 app.listen(8080);
+
+// FOR ROUTERS USE ROUTE.ALL
