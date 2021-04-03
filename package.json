@@ -2,7 +2,7 @@
   "name": "Homework3_PeterRaad",
   "version": "1.0.0",
   "description": "",
-  "main": "services/server.js",
+  "main": "services/Server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
