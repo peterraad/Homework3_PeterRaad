@@ -12,7 +12,7 @@ const MainRoutes = require('../routes/MainRoute');
 // SETUP THE INSTANCE OF WINSTON AND IMPORT IT TO THE MIDDLEWARES THAT NEED IT
 // YOU DO NOT NEED WINSTON TO LOG THE ERORR JUST SEND IT TO THE USER AS AN ERROR
 const app = Express();
-require('../routes/MainRoute');
+// require('../routes/MainRoute');
 // const MainRoutes = require('../routes/MainRoute');
 // check if this works
 // const DateValidationFinder = (thing, search) => {
