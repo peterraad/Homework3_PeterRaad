@@ -1,6 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
 
-// delete middleware
 exports.DeleteChecker = ((req, res, next) => {
   if (!(req.method === 'DELETE')) {
     next();

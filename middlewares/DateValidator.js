@@ -1,12 +1,11 @@
 const { StatusCodes } = require('http-status-codes');
 
-// check if this works
 const DateValidationFinder = (thing, search) => {
   let result = null;
   Object.keys(search).forEach((key) => {
     if ((key.toLowerCase() === thing)) {
       result = search[key];
-    }// console.log(key, obj[key]);
+    }
   });
   return result;
 };

@@ -1,6 +1,5 @@
 const Winston = require('winston');
 
-// logs the incoming request with winston
 exports.Logger = ((req, res, next) => {
   Winston.log({
     level: 'info',
