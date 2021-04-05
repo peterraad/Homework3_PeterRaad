@@ -1,7 +1,16 @@
 const Winston = require('winston');
 
+const Wlogger = Winston.createLogger({
+  transports: [
+    new Winston.transports.Console({
+      format:
+    Winston.format.json(),
+    }),
+  ],
+});
+
 exports.Logger = ((req, res, next) => {
-  Winston.log({
+  Wlogger.log({
     level: 'info',
     serverTime: req.serverDate,
     requestType: req.method,
